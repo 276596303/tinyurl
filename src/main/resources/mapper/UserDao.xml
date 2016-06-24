@@ -1,0 +1,15 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxi.dao.UserDao">
+    <insert id="insert" useGeneratedKeys="true">
+        INSERT IGNORE INTO user(username, password, token)
+        VALUES (#{username}, #{password}, #{token})
+    </insert>
+
+    <select id="getByUsername" resultType="User">
+        SELECT username, password, token
+        FROM user
+        WHERE username=#{username}
+    </select>
+</mapper>

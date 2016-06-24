@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 配置整合mybatis过程 -->
+    <!-- 1: 配置数据库相关参数 properties -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!-- 2: 数据库连接池 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!-- 数据库连接属性 -->
+        <property name="driverClass" value="${jdbc.driverClassName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+
+        <!-- 连接池属性 -->
+        <property name="maxPoolSize" value="20"/>
+        <property name="minPoolSize" value="3"/>
+        <property name="initialPoolSize" value="2"/>
+        <property name="maxIdleTime" value="60"/>
+        <!-- 当连接池连接耗尽时，客户端调用getConnection()后等待获取新连接的时间，
+        超时后将抛出SQLException，如设为0则无限期等待。单位毫秒。默认: 0 -->
+        <property name="checkoutTimeout" value="3000"/>
+        <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 -->
+        <property name="acquireIncrement" value="3"/>
+        <!--重新尝试的时间间隔，默认为：1000毫秒-->
+        <property name="acquireRetryDelay" value="1000"/>
+        <!--c3p0将建一张名为Test的空表，并使用其自带的查询语句进行测试。
+        如果定义了这个参数那么属性preferredTestQuery将被忽略。
+        你不能在这张Test表上进行任何操作，它将只供c3p0测试使用。默认值: null -->
+        <property name="automaticTestTable" value="Test"/>
+    </bean>
+
+    <!-- 约定大于配置 -->
+    <!-- 3: 配置SqlSessionFactory 对象 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 配置mybatis全局配置文件：mybatis-config.xml -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- 扫描entity包 使用别名  -->
+        <property name="typeAliasesPackage" value="org.xiaoxi.entity"/>
+        <!-- 扫描sql配置文件：mapper需要的xml文件 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+
+    <!-- 4:配置扫描Dao接口包，动态实现Dao接口，注入到spring容器中 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 注入sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!-- 给出需要扫描Dao接口包 -->
+        <property name="basePackage" value="org.xiaoxi.dao"/>
+    </bean>
+</beans>
