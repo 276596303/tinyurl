@@ -4,6 +4,7 @@ import com.sun.org.glassfish.gmbal.ParameterNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,9 +29,10 @@ public class UserContrl {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserContrl.class);
 
     @Autowired
+    @Qualifier("UserServiceImpl")
     private UserServiceInterface userService;
 
-    @RequestMapping(value = "/register/",
+    @RequestMapping(value = "/register",
             method = RequestMethod.POST,
             produces = {"application/json;charset=utf-8"})
     @ResponseBody
@@ -39,6 +41,10 @@ public class UserContrl {
         String token = "";
         TinyurlResult<Token> tinyurlResult = null;
         try {
+            if (userService.isExist(username)) {
+                tinyurlResult = new TinyurlResult<Token>(false, UserServiceState.FAILURE.getInfo());
+                return tinyurlResult;
+            }
             token = userService.insert(username, password);
             if (token == null || token.equals("")) {
                 tinyurlResult = new TinyurlResult<Token>(false, UserServiceState.FAILURE.getInfo());
@@ -53,7 +59,7 @@ public class UserContrl {
         return tinyurlResult;
     }
 
-    @RequestMapping(value = "/exist/",
+    @RequestMapping(value = "/exist",
             method = RequestMethod.POST,
             produces = {"application/json;charset=utf-8"})
     @ResponseBody

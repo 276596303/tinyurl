@@ -1,5 +1,7 @@
 package org.xiaoxi.rateLimiter.dao;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.xiaoxi.rateLimiter.enums.Rate;
 
 /**

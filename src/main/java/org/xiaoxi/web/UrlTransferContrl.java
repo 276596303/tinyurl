@@ -3,6 +3,7 @@ package org.xiaoxi.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +22,17 @@ import javax.servlet.http.HttpServletRequest;
  * Created by YanYang on 2016/6/24.
  */
 @Controller
-@RequestMapping(value = "/")
 public class UrlTransferContrl {
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlTransferContrl.class);
 
     @Autowired
-    private TinyurlServiceImpl tinyurlService;
+    @Qualifier("TinyurlServiceImpl")
+    private TinyurlServiceInterface tinyurlService;
 
     @Autowired
     private UserServiceInterface userService;
 
-    @RequestMapping(value = "short/",
+    @RequestMapping(value = "/short",
             method = RequestMethod.POST,
             produces = {"application/json;charset=utf-8"})
     @ResponseBody
@@ -54,7 +55,7 @@ public class UrlTransferContrl {
                 if (url != null) {
                     //拼接完整的短网址
                     String simpleShortUrl = url.getShort_url();
-                    String short_url = host + "/" + simpleShortUrl;
+                    String short_url = "http://" + host + "/" + simpleShortUrl;
                     url.setShort_url(short_url);
                     tinyurlResult = new TinyurlResult<Url>(true, url, DataCode.URL.getCode(), DataCode.URL.getDesc());
                 } else {
@@ -69,30 +70,23 @@ public class UrlTransferContrl {
         return tinyurlResult;
     }
 
-    @RequestMapping(value = "{shortUrl}",
+    @RequestMapping(value = "/{shortUrl}",
             method = RequestMethod.GET,
             produces = {"application/json;charset=utf-8"})
     @ResponseBody
-    public TinyurlResult getLongUrl(@RequestParam(value = "username")String username,
-                                    @RequestParam(value = "token")String token,
-                                    @PathVariable(value = "shortUrl")String short_url) {
+    public TinyurlResult getLongUrl(@PathVariable(value = "shortUrl")String short_url) {
         TinyurlResult tinyurlResult = null;
         try {
             if (short_url.length() > 7) {
                 tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.CHECK_URL.getStateInfo());
                 return tinyurlResult;
             }
-            boolean valid = userService.validUser(username, token);
-            if (valid) {
-                Url url = tinyurlService.transferToLong_url(short_url);
-                if (url != null) {
-                    tinyurlResult = new TinyurlResult<Url>(true, url, DataCode.URL.getCode(), DataCode.URL.getDesc());
-                } else {
-                    tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.TRANSFER_FAILURE.getStateInfo());
-                }
+
+            Url url = tinyurlService.transferToLong_url(short_url);
+            if (url != null) {
+                tinyurlResult = new TinyurlResult<Url>(true, url, DataCode.URL.getCode(), DataCode.URL.getDesc());
             } else {
-                tinyurlResult = new TinyurlResult(false, UserServiceState.FAILURE.getInfo());
-                return tinyurlResult;
+                tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.TRANSFER_FAILURE.getStateInfo());
             }
         } catch (Exception e) {
 

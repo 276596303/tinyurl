@@ -16,6 +16,7 @@
                 1.加入静态资源的处理
                 2.允许使用"/"做整体映射
      -->
+    <mvc:resources mapping="/resource/**" location="/resource/"/>
 
     <mvc:default-servlet-handler/>
 

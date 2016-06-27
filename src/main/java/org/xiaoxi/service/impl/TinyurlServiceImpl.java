@@ -19,7 +19,7 @@ import org.xiaoxi.utils.DecimalTransfer;
 /**
  * Created by YanYang on 2016/6/18.
  */
-@Service
+@Service("TinyurlServiceImpl")
 public class TinyurlServiceImpl implements TinyurlServiceInterface{
     private static final Logger LOGGER = LoggerFactory.getLogger(TinyurlServiceImpl.class);
 

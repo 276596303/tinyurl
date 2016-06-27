@@ -14,7 +14,7 @@ import org.xiaoxi.service.UserServiceInterface;
 /**
  * Created by YanYang on 2016/6/23.
  */
-@Service
+@Service("UserServiceImpl")
 public class UserServiceImpl implements UserServiceInterface {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -23,10 +23,12 @@ public class UserServiceImpl implements UserServiceInterface {
     @Autowired
     private UserDao userDao;
 
-    @Override
     public String insert(String username, String password)throws Exception{
         String token = null;
         try {
+            if (username.equals("") || password.equals("")) {
+                return "";
+            }
             token = getMD5(username, password);
             password = getMD5(password);
             int flag = userDao.insert(username, password, token);
@@ -42,7 +44,6 @@ public class UserServiceImpl implements UserServiceInterface {
         return token;
     }
 
-    @Override
     public User get(String username) throws Exception{
         try {
             return userDao.getByUsername(username);
@@ -52,7 +53,6 @@ public class UserServiceImpl implements UserServiceInterface {
         }
     }
 
-    @Override
     public boolean validUser(String username, String token) throws Exception{
         boolean valid = false;
         String existToken = "";

@@ -3,11 +3,18 @@ package org.xiaoxi.filter;
 import org.omg.CORBA.PRIVATE_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 import org.xiaoxi.rateLimiter.dao.RateHandle;
 import org.xiaoxi.rateLimiter.dao.impl.RateHandleImpl;
 import org.xiaoxi.rateLimiter.enums.Rate;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServlet;
@@ -18,21 +25,20 @@ import java.io.IOException;
 /**
  * Created by YanYang on 2016/6/24.
  */
-@WebFilter(filterName = "rateLimiterFilter", urlPatterns = {"/user/", "/short/"})
+@Component
+@WebFilter(filterName = "rateLimiterFilter", urlPatterns = {"/user/register", "/short"})
 public class RateLimiterFilter extends HttpServlet implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(RateLimiterFilter.class);
 
     private RateHandle rateHandle = new RateHandleImpl();
 
-    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
     }
 
-    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String feature = ((HttpServletRequest) request).getParameter("username");
         String action = ((HttpServletRequest) request).getMethod().toLowerCase();
+        String feature = ((HttpServletRequest) request).getParameter("username");
         long current_time = System.currentTimeMillis();
         try {
             if ((action.equals("post") || action.equals("put") || action.equals("delete")) &&

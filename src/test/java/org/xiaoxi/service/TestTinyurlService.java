@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xiaoxi.dto.Url;
@@ -22,6 +23,7 @@ public class TestTinyurlService extends TestCase{
     private static final Logger LOGGER = LoggerFactory.getLogger(TestTinyurlService.class);
 
     @Autowired
+    @Qualifier("TinyurlServiceImpl")
     private TinyurlServiceInterface tinyurlService;
 
     @Test
@@ -37,22 +39,21 @@ public class TestTinyurlService extends TestCase{
     @Test
     public void testTransferToLong_url() throws Exception {
 
-        Url url = tinyurlService.transferToLong_url("1E");
+        Url url = tinyurlService.transferToLong_url("0006yD");
 
         long startTime = System.currentTimeMillis();
-        int n = 100;
-        for (int i = 1; i < n; i++) {
+        final int n = 100;
+        for (int i = 1; i <= n; i++) {
             new Thread() {
                 public void run() {
-                    for (int i = 1; i < n; i++) {
-                        tinyurlService.transferToLong_url("1E");
+                    synchronized (LOGGER) {
+                        String longUrl = tinyurlService.transferToLong_url("0006yD").getLong_url();
+                        System.out.println(longUrl);
                     }
                 }
             }.start();
+            Thread.sleep(2);
         }
         long endTime = System.currentTimeMillis();
-
-        System.out.println(url);
-        System.out.println(endTime - startTime + "  " + (endTime - startTime) / (double)(n * n));
     }
 }
