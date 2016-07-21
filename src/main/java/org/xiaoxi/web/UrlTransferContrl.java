@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.xiaoxi.async.EventHandler;
+import org.xiaoxi.async.EventModel;
+import org.xiaoxi.async.EventProducer;
+import org.xiaoxi.async.EventType;
 import org.xiaoxi.dto.TinyurlResult;
 import org.xiaoxi.dto.Url;
 import org.xiaoxi.enums.DataCode;
@@ -15,8 +19,12 @@ import org.xiaoxi.enums.UserServiceState;
 import org.xiaoxi.service.TinyurlServiceInterface;
 import org.xiaoxi.service.UserServiceInterface;
 import org.xiaoxi.service.impl.TinyurlServiceImpl;
+import org.xiaoxi.utils.DecimalTransfer;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by YanYang on 2016/6/24.
@@ -31,6 +39,9 @@ public class UrlTransferContrl {
 
     @Autowired
     private UserServiceInterface userService;
+
+    @Autowired
+    EventProducer eventProducer;
 
     @RequestMapping(value = "/short",
             method = RequestMethod.POST,
@@ -81,6 +92,12 @@ public class UrlTransferContrl {
                 tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.CHECK_URL.getStateInfo());
                 return tinyurlResult;
             }
+            // TODO 异步添加访问日志
+            Map<String, Object> ext = new HashMap<String, Object>();
+            ext.put("visitTime", new Date());
+            long id = DecimalTransfer.shortUrlToID(short_url);
+            EventModel eventModel = new EventModel(EventType.URL).setEntityId((int)id).setExt(ext);
+            eventProducer.fireEvent(eventModel);
 
             Url url = tinyurlService.transferToLong_url(short_url);
             if (url != null) {

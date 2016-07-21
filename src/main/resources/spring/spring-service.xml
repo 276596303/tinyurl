@@ -15,6 +15,9 @@
     <context:component-scan base-package="org.xiaoxi.aspect"/>
     <context:component-scan base-package="org.xiaoxi.rateLimiter.dao.impl"/>
     <context:component-scan base-package="org.xiaoxi.filter"/>
+    <context:component-scan base-package="org.xiaoxi.utils"/>
+    <context:component-scan base-package="org.xiaoxi.async"/>
+    <context:component-scan base-package="org.xiaoxi.async.handler"/>
 
     <aop:aspectj-autoproxy/>
 
