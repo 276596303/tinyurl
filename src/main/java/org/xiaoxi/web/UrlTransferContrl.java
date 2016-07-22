@@ -1,34 +1,22 @@
 package org.xiaoxi.web;
 
-import com.sun.media.jfxmediaimpl.HostUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.xiaoxi.async.EventHandler;
-import org.xiaoxi.async.EventModel;
 import org.xiaoxi.async.EventProducer;
-import org.xiaoxi.async.EventType;
 import org.xiaoxi.dto.TinyurlResult;
 import org.xiaoxi.dto.Url;
 import org.xiaoxi.enums.DataCode;
 import org.xiaoxi.enums.TinyurlStateEnum;
-import org.xiaoxi.enums.UserServiceState;
 import org.xiaoxi.service.TinyurlServiceInterface;
 import org.xiaoxi.service.UserServiceInterface;
-import org.xiaoxi.service.impl.TinyurlServiceImpl;
-import org.xiaoxi.utils.CountVisitUtil;
-import org.xiaoxi.utils.DecimalTransfer;
 import org.xiaoxi.utils.HostDecodeUtil;
+import org.xiaoxi.utils.VisitLogAsyncUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.plaf.synth.SynthEditorPaneUI;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by YanYang on 2016/6/24.
@@ -48,7 +36,7 @@ public class UrlTransferContrl {
     EventProducer eventProducer;
 
     @Autowired
-    CountVisitUtil countVisitUtil;
+    VisitLogAsyncUtil visitLogAsyncUtil;
 
     @RequestMapping(value = "/short",
             method = RequestMethod.POST,
@@ -109,7 +97,7 @@ public class UrlTransferContrl {
                 String host = HostDecodeUtil.getHost(longUrl);
                 if (host != null) {
                     long HALF_DAY = 1000 * 60 * 60 * 12;  // 12小时 （单位毫秒）
-                    countVisitUtil.addHostVisit(host, HALF_DAY);   // 此方法中已进行了异步处理
+                    visitLogAsyncUtil.addToBlockingQ(host);   // 此方法中已进行了异步处理
                 }
 
                 tinyurlResult = new TinyurlResult<Url>(true, url, DataCode.URL.getCode(), DataCode.URL.getDesc());
