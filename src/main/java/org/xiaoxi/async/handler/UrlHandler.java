@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Created by YanYang on 2016/7/20.
@@ -32,11 +31,15 @@ public class UrlHandler implements EventHandler {
                 int entityId = model.getEntityId();
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String dateTime = dateFormat.format(model.getExt().get("visitTime"));
+                String dateTime = dateFormat.format(model.getExt().get("time"));
                 Date visitTime = dateFormat.parse(dateTime);
 
+                String host = model.getExt().get("host").toString();
+                int cnt = Integer.valueOf(model.getExt().get("cnt").toString());
+
                 VisitLog visitLog = new VisitLog();
-                visitLog.setShortUrl(entityId);
+                visitLog.setHost(host);
+                visitLog.setCnt(cnt);
                 visitLog.setVisitTime(visitTime);
 
                 visitLogService.addVisitLog(visitLog);

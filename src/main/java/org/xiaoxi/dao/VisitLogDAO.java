@@ -13,7 +13,7 @@ public interface VisitLogDAO {
 
     int insert(VisitLog visitLog);
 
-    VisitLog selectShortUrlCountAndTimeSection(@Param("shortUrl")int shortUrl,
+    VisitLog selectUrlCountAndTimeSection(@Param("host")String host,
                                                @Param("startTime")Date startTime,
                                                @Param("endTime")Date endTime);
 

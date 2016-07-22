@@ -21,7 +21,7 @@ public class TinyurlLog {
 
     //TODO
 
-    @Around("execution(* org.xiaoxi.service.impl.*.transfer*(..))")
+    //@Around("execution(* org.xiaoxi.web.UrlTransferContrl.getLongUrl(..))")
     public Object aroundMethod(ProceedingJoinPoint joinPoint) {
         long startTime = System.currentTimeMillis();
         Object o = null;

@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xiaoxi.dao.VisitLogDAO;
 import org.xiaoxi.entity.VisitLog;
+import org.xiaoxi.utils.DecimalTransfer;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,12 +33,12 @@ public class VisitLogService {
         return count > 0 ? true : false;
     }
 
-    public VisitLog getShortUrlCountTimeSection(int shortUrl, Date startTime, Date endTime) {
+    public VisitLog getUrlCountTimeSection(String host, Date startTime, Date endTime) {
         VisitLog visitLog = null;
         try {
-            visitLog = visitLogDAO.selectShortUrlCountAndTimeSection(shortUrl, startTime, endTime);
+            visitLog = visitLogDAO.selectUrlCountAndTimeSection(host, startTime, endTime);
         } catch (Exception e) {
-            logger.error("获取短网址 " + shortUrl + " 某段时间内的访问数失败");
+            logger.error("获取网址 " + host + " 某段时间内的访问数失败");
             return null;
         }
         return visitLog;
@@ -51,5 +53,29 @@ public class VisitLogService {
             return null;
         }
         return result;
+    }
+
+    public List<VisitLog> getAllUrlCountDataOneWeek() {
+        Date currentTime = new Date();
+        Date aWeekAgo = new Date(currentTime.getTime() - 1000 * 60 * 60 * 24 * 7);
+        List<VisitLog> visitLogs = visitLogDAO.selectAllUrlCountTimeSection(aWeekAgo, currentTime);
+
+        return visitLogs;
+    }
+
+    public List<VisitLog> getAllUrlCountDataOneMonth() {
+        Date currentTime = new Date();
+        Date aMonthAgo = new Date(currentTime.getTime() - (long)1000 * 60 * 60 * 24 * 30);
+        List<VisitLog> visitLogs = visitLogDAO.selectAllUrlCountTimeSection(aMonthAgo, currentTime);
+
+        return visitLogs;
+    }
+
+    public List<VisitLog> getAllUrlCountDataOneYear() {
+        Date currentTime = new Date();
+        Date aYearAgo = new Date(currentTime.getTime() - (long)1000 * 60 * 60 * 24 * 365);
+        List<VisitLog> visitLogs = visitLogDAO.selectAllUrlCountTimeSection(aYearAgo, currentTime);
+
+        return visitLogs;
     }
 }

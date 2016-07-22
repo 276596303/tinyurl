@@ -28,10 +28,11 @@
     </table>
     <table name="visitlog" schema="" catalog="tinyurl" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="short_url" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="host" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="visit_time" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="cnt" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="id"/>
-      <index name="index_short_url" unique="false" columns="short_url"/>
+      <index name="index_long_url" unique="false" columns="host"/>
       <index name="index_visit_time" unique="false" columns="visit_time"/>
     </table>
   </data-source>

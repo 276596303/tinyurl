@@ -7,8 +7,9 @@ import java.util.Date;
  */
 public class VisitLog {
     private int id;
-    private int shortUrl;
+    private String host;
     private Date visitTime;
+    private int cnt;
 
     public int getId() {
         return id;
@@ -18,12 +19,12 @@ public class VisitLog {
         this.id = id;
     }
 
-    public int getShortUrl() {
-        return shortUrl;
+    public String getHost() {
+        return host;
     }
 
-    public void setShortUrl(int shortUrl) {
-        this.shortUrl = shortUrl;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public Date getVisitTime() {
@@ -34,12 +35,21 @@ public class VisitLog {
         this.visitTime = visitTime;
     }
 
+    public int getCnt() {
+        return cnt;
+    }
+
+    public void setCnt(int cnt) {
+        this.cnt = cnt;
+    }
+
     @Override
     public String toString() {
         return "VisitLog{" +
                 "id=" + id +
-                ", shortUrl=" + shortUrl +
+                ", host=" + host +
                 ", visitTime=" + visitTime +
+                ", cnt=" + cnt +
                 '}';
     }
 }

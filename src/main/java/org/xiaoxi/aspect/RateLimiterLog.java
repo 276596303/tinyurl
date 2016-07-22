@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class RateLimiterLog {
     private static final Logger LOGGER = LoggerFactory.getLogger(RateHandleImpl.class);
 
-    @Around("execution(* org.xiaoxi.rateLimiter.dao.impl.RateHandleImpl.isLimit(..))")
+    //@Around("execution(* org.xiaoxi.rateLimiter.dao.impl.RateHandleImpl.isLimit(..))")
     public Object rateLimit(ProceedingJoinPoint joinPoint) {
         long startTime = System.currentTimeMillis();
         Object o = null;

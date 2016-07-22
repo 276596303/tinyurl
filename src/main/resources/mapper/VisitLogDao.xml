@@ -3,23 +3,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.xiaoxi.dao.VisitLogDAO">
     <insert id="insert" parameterType="VisitLog" useGeneratedKeys="true">
-      INSERT IGNORE INTO visitlog(short_url, visit_time)
-      VALUES (#{shortUrl}, #{visitTime})
+      INSERT IGNORE INTO visitlog(host, visit_time, cnt)
+      VALUES (#{host}, #{visitTime}, #{cnt})
     </insert>
 
-    <select id="selectShortUrlCountAndTimeSection" resultType="VisitLog">
-        SELECT count(id) AS id, short_url, visit_time FROM visitlog
+    <select id="selectUrlCountAndTimeSection" resultType="VisitLog">
+        SELECT host, visit_time, SUM(cnt) AS cnt FROM visitlog
         WHERE short_url = #{shortUrl}
         AND visit_time >= #{startTime}
-        AND visit_time <![CDATA[ <= ]]> #{endTime};
+        AND visit_time <![CDATA[ <= ]]> #{endTime}
+        limit 0, 200
     </select>
 
     <select id="selectAllUrlCountTimeSection" resultType="VisitLog">
         SELECT * FROM
-        ( SELECT COUNT(id) AS id, short_url, visit_time FROM visitlog
+        ( SELECT host, visit_time, SUM(cnt) AS cnt FROM visitlog
           WHERE visit_time >= #{startTime} AND visit_time <![CDATA[ <= ]]> #{endTime}
-          GROUP BY short_url
+          GROUP BY host
         )
-        AS tt ORDER BY tt.visit_time DESC
+        AS tt ORDER BY tt.cnt DESC limit 0, 200
     </select>
 </mapper>

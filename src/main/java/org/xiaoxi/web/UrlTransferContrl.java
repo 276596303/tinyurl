@@ -1,5 +1,6 @@
 package org.xiaoxi.web;
 
+import com.sun.media.jfxmediaimpl.HostUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,12 @@ import org.xiaoxi.enums.UserServiceState;
 import org.xiaoxi.service.TinyurlServiceInterface;
 import org.xiaoxi.service.UserServiceInterface;
 import org.xiaoxi.service.impl.TinyurlServiceImpl;
+import org.xiaoxi.utils.CountVisitUtil;
 import org.xiaoxi.utils.DecimalTransfer;
+import org.xiaoxi.utils.HostDecodeUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +46,9 @@ public class UrlTransferContrl {
 
     @Autowired
     EventProducer eventProducer;
+
+    @Autowired
+    CountVisitUtil countVisitUtil;
 
     @RequestMapping(value = "/short",
             method = RequestMethod.POST,
@@ -92,15 +99,19 @@ public class UrlTransferContrl {
                 tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.CHECK_URL.getStateInfo());
                 return tinyurlResult;
             }
-            // TODO 异步添加访问日志
-            Map<String, Object> ext = new HashMap<String, Object>();
-            ext.put("visitTime", new Date());
-            long id = DecimalTransfer.shortUrlToID(short_url);
-            EventModel eventModel = new EventModel(EventType.URL).setEntityId((int)id).setExt(ext);
-            eventProducer.fireEvent(eventModel);
 
             Url url = tinyurlService.transferToLong_url(short_url);
+
             if (url != null) {
+
+                // TODO 异步添加访问日志
+                String longUrl = url.getLong_url();
+                String host = HostDecodeUtil.getHost(longUrl);
+                if (host != null) {
+                    long HALF_DAY = 1000 * 60 * 60 * 12;  // 12小时 （单位毫秒）
+                    countVisitUtil.addHostVisit(host, HALF_DAY);   // 此方法中已进行了异步处理
+                }
+
                 tinyurlResult = new TinyurlResult<Url>(true, url, DataCode.URL.getCode(), DataCode.URL.getDesc());
             } else {
                 tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.TRANSFER_FAILURE.getStateInfo());
