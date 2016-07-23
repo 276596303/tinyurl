@@ -28,7 +28,7 @@ public class VisitLogAsyncUtil implements InitializingBean {
     private ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
     private static final int BLOCKING_SIZE = 1000;  //根据实际情况更改
     private BlockingQueue<Object> blockingQueue = new ArrayBlockingQueue<Object>(BLOCKING_SIZE);
-    private static final long EXPIRE_TIME = 5000; //1000 * 60 * 60 * 24; //单位毫秒 //TODO 部署前更改
+    private static final long EXPIRE_TIME = 1000 * 60 * 60 * 12; //单位毫秒 //TODO 部署前更改
 
     private ReentrantLock mapModifyLock = new ReentrantLock();
 
@@ -62,7 +62,7 @@ public class VisitLogAsyncUtil implements InitializingBean {
 
         // 固定任务（每天凌晨 03:00:00 执行一次定时任务） //TODO 部署前请更改delay时间
         scheduledExecutorService.scheduleAtFixedRate(new Dog(),
-                0, 10000, TimeUnit.MILLISECONDS);
+                delay, DAY, TimeUnit.MILLISECONDS);
     }
 
     public boolean addToBlockingQ(String host) {

@@ -13,10 +13,12 @@ import org.xiaoxi.enums.DataCode;
 import org.xiaoxi.enums.TinyurlStateEnum;
 import org.xiaoxi.service.TinyurlServiceInterface;
 import org.xiaoxi.service.UserServiceInterface;
+import org.xiaoxi.utils.BadUrlUtil;
 import org.xiaoxi.utils.HostDecodeUtil;
 import org.xiaoxi.utils.VisitLogAsyncUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by YanYang on 2016/6/24.
@@ -38,6 +40,9 @@ public class UrlTransferContrl {
     @Autowired
     VisitLogAsyncUtil visitLogAsyncUtil;
 
+    @Autowired
+    BadUrlUtil badUrlUtil;
+
     @RequestMapping(value = "/short",
             method = RequestMethod.POST,
             produces = {"application/json;charset=utf-8"})
@@ -53,6 +58,9 @@ public class UrlTransferContrl {
         try {
             boolean valid = userService.validUser(username, token);
             if (valid) {
+                if (badUrlUtil.containsBadUrl(long_url)) {
+                    return new TinyurlResult(false, TinyurlStateEnum.TRANSFER_FAILURE.getStateInfo());
+                }
                 if (long_url == null || long_url.trim().equals("")) {
                     tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.CHECK_URL.getStateInfo());
                     return tinyurlResult;
@@ -79,13 +87,14 @@ public class UrlTransferContrl {
     @RequestMapping(value = "/{shortUrl}",
             method = RequestMethod.GET,
             produces = {"application/json;charset=utf-8"})
-    @ResponseBody
-    public TinyurlResult getLongUrl(@PathVariable(value = "shortUrl")String short_url) {
+
+    public void getLongUrl(@PathVariable(value = "shortUrl")String short_url,
+                             HttpServletResponse response) {
         TinyurlResult tinyurlResult = null;
+        response.setStatus(302);
         try {
             if (short_url.length() > 7) {
-                tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.CHECK_URL.getStateInfo());
-                return tinyurlResult;
+                return;
             }
 
             Url url = tinyurlService.transferToLong_url(short_url);
@@ -100,13 +109,19 @@ public class UrlTransferContrl {
                     visitLogAsyncUtil.addToBlockingQ(host);   // 此方法中已进行了异步处理
                 }
 
-                tinyurlResult = new TinyurlResult<Url>(true, url, DataCode.URL.getCode(), DataCode.URL.getDesc());
+                String responseUrl = url.getLong_url();
+                int httpPos = responseUrl.indexOf("http://");
+                int httpsPos = responseUrl.indexOf("https://");
+                if (httpPos < 0 && httpsPos < 0) {
+                    responseUrl = "http://" + responseUrl;
+                }
+                response.sendRedirect(responseUrl);
             } else {
-                tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.TRANSFER_FAILURE.getStateInfo());
+//                tinyurlResult = new TinyurlResult(false, TinyurlStateEnum.TRANSFER_FAILURE.getStateInfo());
+                return;
             }
         } catch (Exception e) {
-
+            return;
         }
-        return tinyurlResult;
     }
 }

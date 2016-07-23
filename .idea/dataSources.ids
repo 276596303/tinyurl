@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="dataSourceStorage">
-  <data-source name="MySQL - tinyurl@localhost" uuid="9fb9ea1d-670b-4bb4-9a7b-9ea56665e284">
+  <data-source name="MySQL - tinyurl@localhost" uuid="d8f37f81-ffcb-43fe-a2bf-3b52c87fb6d1">
     <database-info product="MySQL" version="5.6.26" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
       <extra-name-characters>#@</extra-name-characters>
       <identifier-quote-string>`</identifier-quote-string>
     </database-info>
     <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
     <schema name="" catalog="tinyurl"/>
+    <table name="badurl" schema="" catalog="tinyurl" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="url" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <index name="u_url" unique="true" columns="url"/>
+      <index name="index_url" unique="false" columns="url"/>
+    </table>
     <table name="test" schema="" catalog="tinyurl" type="TABLE">
       <column name="a" sqlType="CHAR" precision="1" scale="0" nullable="true" jdbcType="1"/>
     </table>
