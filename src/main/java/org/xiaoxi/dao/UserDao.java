@@ -7,9 +7,9 @@ import org.xiaoxi.entity.User;
  * Created by YanYang on 2016/6/23.
  */
 public interface UserDao {
-    int insert(@Param("username")String username,
-                @Param("password")String password,
-                @Param("token")String token);
+    int insert(User user);
 
     User getByUsername(@Param("username")String username);
+
+    User getByUserId(int id);
 }

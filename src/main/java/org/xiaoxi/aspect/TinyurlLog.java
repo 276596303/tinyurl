@@ -1,13 +1,11 @@
 package org.xiaoxi.aspect;
 
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
-import org.xiaoxi.service.impl.TinyurlServiceImpl;
+import org.xiaoxi.service.TinyurlService;
 
 import java.util.Arrays;
 
@@ -17,7 +15,7 @@ import java.util.Arrays;
 @Component
 @Aspect
 public class TinyurlLog {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TinyurlServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinyurlService.class);
 
     //TODO
 

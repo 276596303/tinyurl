@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="dataSourceStorage">
-  <data-source name="MySQL - tinyurl@localhost" uuid="d8f37f81-ffcb-43fe-a2bf-3b52c87fb6d1">
+  <data-source name="MySQL - tinyurl@localhost" uuid="de2cb0bd-6af9-4913-8333-0a0029e9b14c">
     <database-info product="MySQL" version="5.6.26" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
       <extra-name-characters>#@</extra-name-characters>
       <identifier-quote-string>`</identifier-quote-string>
@@ -27,11 +27,14 @@
       <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" remarks="55So5oi3SUQ=" autoIncrement="true"/>
       <column name="username" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12" remarks="55So5oi35ZCN"/>
       <column name="password" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12" remarks="5a+G56CB"/>
-      <column name="token" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12" remarks="55So5oi35Y+j5Luk"/>
       <primary-key name="PRIMARY" columns="id"/>
       <index name="u_user" unique="true" columns="username,password"/>
-      <index name="idx_token" unique="false" columns="token"/>
       <index name="idx_username" unique="false" columns="username"/>
+    </table>
+    <table name="userstinyurl" schema="" catalog="tinyurl" type="TABLE">
+      <column name="user_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="short_url_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <index name="index_user_id" unique="false" columns="user_id"/>
     </table>
     <table name="visitlog" schema="" catalog="tinyurl" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>

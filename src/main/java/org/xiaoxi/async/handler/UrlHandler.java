@@ -8,7 +8,7 @@ import org.xiaoxi.async.EventHandler;
 import org.xiaoxi.async.EventModel;
 import org.xiaoxi.async.EventType;
 import org.xiaoxi.entity.VisitLog;
-import org.xiaoxi.service.impl.VisitLogService;
+import org.xiaoxi.service.VisitLogService;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;

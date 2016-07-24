@@ -1,29 +1,60 @@
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="//cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
     <title>短网址服务</title>
 </head>
 <body>
+
 <div class="container">
-    <div class="panel panel-primary text-center">
-        <div class="panel-heading panel-success">
-            <h4>短网址服务</h4>
+    <div class="row" style="height: 2px"></div>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">TinyUrl</a>
+
+            <p class="navbar-text pull-left text-muted hidden-xs hidden-sm">
+                <small class="text-muted text-sm"><em>短网址服务</em></small>
+            </p>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            <div class="panel panel-warning">
-                <div class="panel-heading">
-                    <h5>取得了用户口令那就测试一下吧（用户口令获取、长网址转换为短网址最高频率 2次/s 过高会限制访问（403））
-                        </h5>
+        <div class="">
+            <ul class="nav navbar-nav pull-right">
+                #if($user)
+                <div class="dropdown">
+                    <button type="button" class="btn dropdown-toggle" id="usermenu" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-user">$!{user.username}</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="usermenu">
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">主页</a>
+                        </li>
+                        <li role="presentation" class="divider"></li>
+                        <li>
+                            <a role="menuitem" tabindex="-1" href="/user/logout">登出</a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
+                #else
+                <li class="active">
+                    <a href="/route/login/">
+                        <span class="glyphicon glyphicon-log-in"></span>
+                        <span>登入</span>
+                    </a>
+                </li>
+                #end
+            </ul>
         </div>
-        <div class="col-md-4">
+    </nav>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h5>长网址转换为短网址最高频率 2次/s 过高会限制访问（403）</h5>
+        </div>
+        <div class="panel-body">
             <div class="row">
                 <div class="col-md-3">
                     <a href="/visitLog/week/"><span class="glyphicon glyphicon-time">最近一周数据</span></a>
@@ -34,55 +65,37 @@
                 <div class="col-md-3">
                     <a href="/visitLog/year/"><span class="glyphicon glyphicon-time">最近一年数据</span></a>
                 </div>
+                <div class="col-md-3">
+                    <a href="/badurl"><span class="glyphicon glyphicon-ban-circle">敏感网址</span></a>
+                </div>
             </div>
         </div>
     </div>
 
 
     <div class="row">
-        <div class="col-md-4">
-                <form role="form">
-                    <div class="form-group" id="nameForm">
-                        <label for="name">用户名</label>
-                        <input type="text" class="form-control" id="name" placeholder="用户名"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">密码</label>
-                        <input type="text" class="form-control" id="password" placeholder="密码"/>
-                    </div>
-                    <button type="button" class="btn btn-default" id="getTokenBtn">获取口令</button>
-                    <div id="tokenShow"></div>
-                </form>
-        </div>
-        <div class="col-md-1"></div>
-        <div class="col-md-7">
-            <div class="row">
-                <form role="form">
-                    <div class="form-group">
-                        <label for="url">长网址</label>
-                        <input type="text" class="form-control" id="url" placeholder="请输入长网址">
-                    </div>
-                    <div class="form-group">
-                        <label for="username">用户名</label>
-                        <input type="text" class="form-control" id="username" placeholder="请输入用户名">
-                    </div>
-                    <div class="form-group">
-                        <label for="token">用户口令</label>
-                        <input type="text" class="form-control" id="token" placeholder="输入用户口令">
-                    </div>
+        <div class="col-md-0"></div>
+        <div class="col-md-8">
+            <form role="form">
+                <div class="form-group">
+                    <label for="url">长网址</label>
+                    <input type="text" class="form-control" id="url" placeholder="请输入长网址">
+                </div>
+                <div class="form-group">
                     <button type="button" class="btn btn-default" id="getShort">获取短网址</button>
                     <div id="urlShow"></div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
+        <div class="col-md-4"></div>
     </div>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12">
             <div class="panel panel-primary panel-success">
                 <div class="panel-heading">
-                    <h5>感兴趣的小伙伴，可以去我的 GitHub 主页, <br>
-                        一起探讨更优秀的实现<a href="https://github.com/hongxiyang">https://github.com/hongxiyang</a> <br>
+                    <h5>感兴趣的小伙伴，可以去我的 GitHub 主页,
+                        一起探讨更优秀的实现<a href="https://github.com/hongxiyang">https://github.com/hongxiyang</a>
                         （我的project：Java MVC框架、Tinyurl、rateLimiter）
                     </h5>
                 </div>
@@ -103,42 +116,38 @@
                             <th>Restful接口说明</th>
                             <th>接口参数示例</th>
                             <th>返回Json数据示例</th>
+                            <th>返回JSON说明</th>
                         </tr>
                         </thead>
                         <tr>
                             <td>hongxiyang.me/user/register</td>
                             <td>获取用户口令</td>
-                            <td>{username: 'xiaoxi',<br>
-                                 password: '1234567'}</td>
-                            <td>{ "success": true, <br>
-                                &nbsp;"dataCode": 1, "dataDesc": "口令",<br>
-                                &nbsp;"data": {"username": "xiaoxi1",<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                "token": "fbe7bd2fdf52b..."},<br>
-                                "error": null }<br>
-                                <strong>success字段</strong>表示有无返回结果<br>
-                                <strong>data字段</strong>中的是返回数据，包含用户名和口令<br>
-                                <strong>如果seccess字段为 false，则没有返回结果<br>(data字段则不存在, error字段会返回错误信息）</strong>
+                            <td>{username: ,
+                                password: }
                             </td>
+                            <td>{ code : ,
+                                    message :
+                                }
+                            </td>
+                            <td>code为1代表请求成功，为0代表失败；<br>
+                                message为响应说明</td>
                         </tr>
 
                         <tr>
                             <td>hongxiyang.me/short</td>
                             <td>转换为短网址</td>
-                            <td>{username: 'xiaoxi',<br>
-                                 &nbsp;token: 'fbe7bd2fdf52b...',<br>
-                                 &nbsp;longUrl: 'baidu.com'}
+                            <td>{username: ,
+                                &nbsp;password: ,
+                                &nbsp;longUrl: }
                             </td>
                             <td>
-                                {"dataCode": 2,<br>
-                                &nbsp;"dataDesc": "网址",<br>
-                                &nbsp;"success": true,<br>
-                                &nbsp;"data":{"short_url": "hongxiyang.me/0006yE",<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                "long_url": "http://leonard1853..."},<br>
-                                "error": null}
+                                { code : ,
+                                message :
+                                }
+                            </td>
+                            <td>code为1代表请求成功，为0代表失败；<br>
+                                如果code为1，message为短网址<br>
+                                反之则为错误信息
                             </td>
                         </tr>
                     </table>
@@ -147,13 +156,6 @@
         </div>
 
 
-    </div>
-    <div class="row">
-        <div class="panel">
-            <div class="panel-footer text-center panel-warning">
-                <a href="/badurl"><span class="glyphicon glyphicon-ban-circle">敏感网址</span></a>
-            </div>
-        </div>
     </div>
 
     <div class="row">
@@ -164,72 +166,6 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="/resource/js/home.js"></script>
 </body>
-<script type="text/javascript">
-    $(function() {
-
-        $("input#name").blur(function (){
-            $("div#nameForm label").html("用户名");
-            var name = $("input#name").val();
-            $.post('/user/exist',{username: name}, function(result){
-                if (result) {
-                    $("div#nameForm").addClass("has-error");
-                    $("div#nameForm label").html("用户名已存在");
-                    $("button#getTokenBtn").attr({"disabled":"disabled"});
-                } else {
-                    $("div#nameForm label").html("用户名");
-                    $("div#nameForm").removeClass();
-                    $("div#nameForm").addClass("form-group");
-                    $("button#getTokenBtn").removeAttr("disabled");
-                }
-            });
-        });
-
-        $("button#getTokenBtn").click(function(){
-            $("#tokenShow").html("");
-            var username = $("input#name").val();
-            var password = $("input#password").val();
-            $.post('/user/register',{username:username, password:password} , function(result){
-                var success = result.success;
-                if (success) {
-                    $("#tokenShow").append("<div class='panel panel-success'>" +
-                                                "<div class='panel-heading'>" +
-                                                    "<h5>" + "用户口令" + " " + result.data.token + "</h5>" +
-                                                "</div>" +
-                                             "</div>");
-                } else {
-                    $("#tokenShow").append("获取口令失败，请重试！");
-                }
-            });
-        });
-
-        $("button#getShort").click(function(){
-            $("#urlShow").html("");
-
-            var longUrl =  $("input#url").val();
-            var username = $("input#username").val();
-            var token = $("input#token").val();
-
-            $.post('/short', {username: username, token: token, longUrl:longUrl}, function(result){
-                var success = result.success;
-                if (success) {
-                    $("#urlShow").append("<div class='panel panel-success'>" +
-                                                "<div class='panel-heading'>" +
-                                                    "<h5>" + "短网址" + " " +
-                                                        "<a id = 'shortUrl' href='" + result.data.short_url + "'>" + result.data.short_url +
-                                                        "</a>" +
-                                                    "</h5>" +
-                                                    "<br>"+
-                                                    "<h5>" + "长网址" + " " + result.data.long_url + "</h5>" +
-                                                "</div>" +
-                                            "</div>");
-                } else {
-                    $("#urlShow").append("请核查参数是否输入正确！");
-                }
-            });
-        });
-
-
-    });
-</script>
 </html>

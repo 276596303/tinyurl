@@ -19,7 +19,9 @@ import java.util.List;
 public class RedisAdapter implements InitializingBean{
     private static final Logger logger = LoggerFactory.getLogger(RedisAdapter.class);
 
-    private static String  EVENT = "EVENT";
+    private static String SPLIT = ":";
+    private static String EVENT = "EVENT";
+    private static String USER_PREFIX = "USER" + SPLIT;
 
     private JedisPool jedisPool;
 
@@ -30,6 +32,15 @@ public class RedisAdapter implements InitializingBean{
     public String getEventKey() {
         return EVENT;
     }
+
+    public String getUserPrefix() {
+        return USER_PREFIX;
+    }
+
+    public String getSPLIT() {
+        return SPLIT;
+    }
+
     public long lpush(String key, String value) {
         Jedis jedis = null;
         try {

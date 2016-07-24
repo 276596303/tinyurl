@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.xiaoxi.dao.BadUrlDao;
-import org.xiaoxi.dto.Url;
 import org.xiaoxi.entity.BadUrl;
 import org.xiaoxi.utils.BadUrlUtil;
 
@@ -21,9 +20,9 @@ import java.util.List;
 @Controller
 public class BadUrlController {
     private static final Logger logger = LoggerFactory.getLogger(BadUrlController.class);
-    private static final String[] USER_NAMES = {"admin", "xiaoxi", "hongxiyang"};
+    private static final String[] USER_NAMES = {"xiaoxi", "hongxiyang"};
 
-    private static final String[] PASS_WORDS= {"admin", "xiaoxi", "hongxiyang", "19921109"};
+    private static final String[] PASS_WORDS= {"hongxiyang"};
 
     @Autowired
     BadUrlUtil badUrlUtil;

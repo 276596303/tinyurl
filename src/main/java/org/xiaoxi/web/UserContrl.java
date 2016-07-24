@@ -1,24 +1,23 @@
 package org.xiaoxi.web;
 
-import com.sun.org.glassfish.gmbal.ParameterNames;
+import com.sun.javafx.sg.prism.NGShape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.xiaoxi.dto.TinyurlResult;
-import org.xiaoxi.dto.Token;
-import org.xiaoxi.entity.Tinyurl;
 import org.xiaoxi.entity.User;
 import org.xiaoxi.enums.DataCode;
 import org.xiaoxi.enums.UserServiceState;
-import org.xiaoxi.service.UserServiceInterface;
+import org.xiaoxi.service.UserService;
+import org.xiaoxi.utils.JSONUtil;
 
-import java.util.concurrent.ExecutionException;
+import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * Created by YanYang on 2016/6/23.
@@ -29,34 +28,78 @@ public class UserContrl {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserContrl.class);
 
     @Autowired
-    @Qualifier("UserServiceImpl")
-    private UserServiceInterface userService;
+    UserService userService;
 
     @RequestMapping(value = "/register",
             method = RequestMethod.POST,
             produces = {"application/json;charset=utf-8"})
-    @ResponseBody
-    public TinyurlResult userRegister(@RequestParam(value = "username")String username,
-                                @RequestParam(value = "password")String password) {
-        String token = "";
-        TinyurlResult<Token> tinyurlResult = null;
-        try {
-            if (userService.isExist(username)) {
-                tinyurlResult = new TinyurlResult<Token>(false, UserServiceState.FAILURE.getInfo());
-                return tinyurlResult;
-            }
-            token = userService.insert(username, password);
-            if (token == null || token.equals("")) {
-                tinyurlResult = new TinyurlResult<Token>(false, UserServiceState.FAILURE.getInfo());
-            } else {
-                Token tk = new Token(username, token);
-                tinyurlResult = new TinyurlResult<Token>(true, tk, DataCode.TOKEN.getCode(), DataCode.TOKEN.getDesc());
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-
+    public String userRegister(@RequestParam(value = "username")String username,
+                               @RequestParam(value = "password")String password,
+                               HttpSession session,
+                               Model model) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        Map<String, String> map = userService.register(user);
+        if (map.containsKey("usernameMessage")) {
+            model.addAttribute("usernameMessage", map.get("usernameMessage").toString());
+            return "register";
         }
-        return tinyurlResult;
+        if (map.containsKey("passwordMessage")) {
+            model.addAttribute("passwordMessage", map.get("passwordMessage").toString());
+            return "register";
+        }
+        if (map.containsKey("success")) {
+            if ("1".equals(map.get("success"))) {
+                User user1 = new User();
+                user1.setUsername(username);
+                user1.setPassword(password);
+                session.setAttribute("user", user1);
+                session.setMaxInactiveInterval(60 * 60 * 24);
+                model.addAttribute("user", user1);
+                return "index";
+            }
+        }
+        model.addAttribute("exception", "注册异常");
+        return "register";
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST,
+            produces = {"application/json;charset=utf-8"})
+    public String login(HttpSession session,
+                        Model model,
+                        @RequestParam("username")String username,
+                        @RequestParam("password")String password) {
+        Object user = session.getAttribute("username");
+        if (user != null && username.equals(((User)user).getUsername())
+                && password.equals(((User)user).getPassword())){
+            session.setMaxInactiveInterval(60*60*24);
+            model.addAttribute("user", user);
+            return "redirect:/index";
+        } else {
+            try {
+                User usr = new User();
+                usr.setUsername(username);
+                usr.setPassword(password);
+                boolean success = userService.validUser(usr);
+                if (success) {
+                    session.setAttribute("user", usr);
+                    session.setMaxInactiveInterval(60*60*24);
+                    model.addAttribute("user", usr);
+                    return "redirect:/index";
+                }
+            } catch (Exception e) {
+                LOGGER.error("验证用户异常");
+                return "redirect:index";
+            }
+            return "redirect:/index";
+        }
+    }
+
+    @RequestMapping(value = "/logout", method = {RequestMethod.GET, RequestMethod.POST})
+    public String logout(HttpSession session) {
+        session.removeAttribute("user");
+        return "index";
     }
 
     @RequestMapping(value = "/exist",

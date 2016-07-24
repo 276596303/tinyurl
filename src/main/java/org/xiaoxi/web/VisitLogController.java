@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.xiaoxi.entity.VisitLog;
-import org.xiaoxi.service.impl.VisitLogService;
+import org.xiaoxi.service.VisitLogService;
 
 import java.util.List;
 

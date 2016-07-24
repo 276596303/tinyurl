@@ -1,7 +1,6 @@
 package org.xiaoxi.dao;
 
 import org.apache.ibatis.annotations.Param;
-import org.xiaoxi.dto.Url;
 import org.xiaoxi.entity.Tinyurl;
 
 /**

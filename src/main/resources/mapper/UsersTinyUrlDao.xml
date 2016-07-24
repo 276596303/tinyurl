@@ -1,0 +1,14 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxi.dao.UsersTinyUrlDao">
+    <insert id="insert" parameterType="UsersTinyUrl">
+        INSERT into userstinyurl(user_id, short_url_id)
+        VALUES (#{userId}, #{shortUrlId})
+    </insert>
+
+    <select id="selectByUserId" resultType="UsersTinyUrl">
+        SELECT * FROM userstinyurl
+        WHERE user_id = #{userId}
+    </select>
+</mapper>
