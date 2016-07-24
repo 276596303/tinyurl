@@ -50,36 +50,37 @@ public class UserService {
             return map;
         }
 
-        boolean success = addUser(user);
-        if (success) {
-            map.put("success", String.valueOf(1));
+        int userId = addUser(user);
+        if (userId != Integer.MIN_VALUE && userId > 0) {
+            map.put("success", String.valueOf(userId));
             return map;
         } else {
-            map.put("success", String.valueOf(0));
+            map.put("success", String.valueOf(Integer.MIN_VALUE));
             return map;
         }
     }
 
-    public boolean addUser(User user) {
+    public int addUser(User user) {
         String username = user.getUsername();
         String password = user.getPassword();
         try {
             if (username.equals("") || password.equals("")) {
-                return false;
+                return Integer.MIN_VALUE;
             }
             password = getMD5(password);
             User usr = new User();
             usr.setUsername(username);
-            user.setPassword(password);
-            int flag = userDao.insert(user);
+            usr.setPassword(password);
+            int flag = userDao.insert(usr);
+            int userId = usr.getId();
             if (flag < 0) {
                 throw new RuntimeException("insert user failure");
             } else {
-                return true;
+                return usr.getId();
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return false;
+            return Integer.MIN_VALUE;
         }
     }
 
@@ -101,8 +102,8 @@ public class UserService {
         }
     }
 
-    public boolean validUser(User user) throws Exception{
-        boolean valid = false;
+    public int validUser(User user) throws Exception{
+        int userId = Integer.MIN_VALUE;
         String username = user.getUsername();
         String password = user.getPassword();
         password = getMD5(password);
@@ -113,14 +114,16 @@ public class UserService {
         try {
             String value = redisAdapter.get(key);
             if (value != null && !"".equals(value)) {
-                return true;
+                userId = Integer.valueOf(value);
+                return userId;
             } else {
                 User user1 = getByUsername(username);
                 if (user1 != null && user1.getPassword().equals(password)) {
-                    redisAdapter.set(key, String.valueOf(1));
-                    return true;
+                    redisAdapter.set(key, String.valueOf(user1.getId()));
+                    userId = user1.getId();
+                    return userId;
                 } else {
-                    return false;
+                    return userId;
                 }
             }
         } catch (Exception e) {
@@ -145,7 +148,7 @@ public class UserService {
     }
 
     private String getMD5(String str) {
-        str = str + slat;
+        str = slat + str;
         String md5 = DigestUtils.md5DigestAsHex(str.getBytes());
         return md5;
     }

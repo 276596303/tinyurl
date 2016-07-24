@@ -50,10 +50,11 @@ public class UserContrl {
             return "register";
         }
         if (map.containsKey("success")) {
-            if ("1".equals(map.get("success"))) {
+            if (Integer.valueOf(map.get("success")) > 0) {
                 User user1 = new User();
                 user1.setUsername(username);
                 user1.setPassword(password);
+                user1.setId(Integer.valueOf(map.get("success")));
                 session.setAttribute("user", user1);
                 session.setMaxInactiveInterval(60 * 60 * 24);
                 model.addAttribute("user", user1);
@@ -70,7 +71,7 @@ public class UserContrl {
                         Model model,
                         @RequestParam("username")String username,
                         @RequestParam("password")String password) {
-        Object user = session.getAttribute("username");
+        Object user = session.getAttribute("user");
         if (user != null && username.equals(((User)user).getUsername())
                 && password.equals(((User)user).getPassword())){
             session.setMaxInactiveInterval(60*60*24);
@@ -81,8 +82,9 @@ public class UserContrl {
                 User usr = new User();
                 usr.setUsername(username);
                 usr.setPassword(password);
-                boolean success = userService.validUser(usr);
-                if (success) {
+                int userId = userService.validUser(usr);
+                if (userId != Integer.MIN_VALUE && userId > 0) {
+                    usr.setId(userId);
                     session.setAttribute("user", usr);
                     session.setMaxInactiveInterval(60*60*24);
                     model.addAttribute("user", usr);

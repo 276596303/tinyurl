@@ -5,7 +5,8 @@ package org.xiaoxi.async;
  */
 public enum EventType {
 
-    URL(0);
+    URL(0),
+    USERS_TINYURL(1);
 
     private int type;
     EventType(int type) {

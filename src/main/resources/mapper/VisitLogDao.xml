@@ -9,7 +9,7 @@
 
     <select id="selectUrlCountAndTimeSection" resultType="VisitLog">
         SELECT host, visit_time, SUM(cnt) AS cnt FROM visitlog
-        WHERE short_url = #{shortUrl}
+        WHERE host = #{host}
         AND visit_time >= #{startTime}
         AND visit_time <![CDATA[ <= ]]> #{endTime}
         limit 0, 200

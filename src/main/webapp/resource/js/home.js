@@ -37,7 +37,7 @@ $(function () {
                     "</h5>" +
                     "</div>");
             } else {
-                $("#urlShow").append("请核查参数是否输入正确！");
+                $("#urlShow").append(result.message);
             }
         });
     });
